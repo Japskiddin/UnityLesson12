@@ -17,12 +17,7 @@ public class OrbitCamera : MonoBehaviour
     }
 
     public void LateUpdate() {
-        float horInput = Input.GetAxis("Horizontal");
-        if (horInput != 0) {
-            _rotY += horInput * rotSpeed; // медленный поворот при помощи клавиш
-        } else {
-            _rotY += Input.GetAxis("Mouse X") * rotSpeed * 3; // быстрый поворот при помощи мыши
-        }
+        _rotY -= Input.GetAxis("Horizontal") * rotSpeed;
 
         Quaternion rotation = Quaternion.Euler(0, _rotY, 0);
         transform.position = target.position - (rotation * _offset); // поддерживаем начальное смещение, сдвигаемое в соответствии с поворотом камеры

@@ -8,9 +8,11 @@ public class InventoryManager : MonoBehaviour, IGameManager
 
     public ManagerStatus status { get; private set; } // свойство читается откуда угодно, но задается только в этом сценарии
     public string equippedItem { get; private set; }
+    private NetworkService _network;
 
-    public void Startup() {
+    public void Startup(NetworkService service) {
         Debug.Log("Inventory manager starting..."); // сюда идут все задачи запуска с долгим временем выполнения
+        _network = service;
         _items = new Dictionary<string, int>(); // инициализируем пустой список элементов
         status = ManagerStatus.Started; // для задач с долгим временем выполнения используем состояние Initializing
     }

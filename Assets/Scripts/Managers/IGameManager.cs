@@ -5,5 +5,5 @@ using UnityEngine;
 public interface IGameManager
 {
     ManagerStatus status { get; } // перечисление, которое нужно обрабатывать
-    void Startup();
+    void Startup(NetworkService service);
 }
