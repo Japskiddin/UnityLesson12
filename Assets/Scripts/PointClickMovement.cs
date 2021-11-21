@@ -23,30 +23,37 @@ public class PointClickMovement : MonoBehaviour
     private Vector3 _targetPos = Vector3.one;
 
     // Start is called before the first frame update
-    void Start() {
+    void Start()
+    {
         _charController = GetComponent<CharacterController>();
         _vertSpeed = minFall; // инициализируем переменную вертикальной скорости, присваивая ей минимальную скорость падения в начале
         _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         Vector3 movement = Vector3.zero; // начинаем с вектора (0,0,0), постепенно добавляя компоненты движения
 
-        if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) { // задаем целевую точку по щелчку мыши
+        if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
+        { // задаем целевую точку по щелчку мыши
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // бросаем луч в точку щелчка
             RaycastHit mouseHit;
-            if (Physics.Raycast(ray, out mouseHit)) {
+            if (Physics.Raycast(ray, out mouseHit))
+            {
                 GameObject hitObject = mouseHit.transform.gameObject;
-                if (hitObject.layer == LayerMask.NameToLayer("Ground")) {
+                if (hitObject.layer == LayerMask.NameToLayer("Ground"))
+                {
                     _targetPos = mouseHit.point; // устанавливаем цель в точке попадания луча
                     _curSpeed = moveSpeed;
                 }
             }
         }
 
-        if (_targetPos != Vector3.one) { // если целевая точка задана, перемещаем
-            if (_curSpeed > moveSpeed * .5f) {
+        if (_targetPos != Vector3.one)
+        { // если целевая точка задана, перемещаем
+            if (_curSpeed > moveSpeed * .5f)
+            {
                 Vector3 adjustPos = new Vector3(_targetPos.x, transform.position.y, _targetPos.z);
                 Quaternion targetRot = Quaternion.LookRotation(adjustPos - transform.position);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
@@ -55,9 +62,11 @@ public class PointClickMovement : MonoBehaviour
             movement = _curSpeed * Vector3.forward;
             movement = transform.TransformDirection(movement);
 
-            if (Vector3.Distance(_targetPos, transform.position) < targetBuffer) {
+            if (Vector3.Distance(_targetPos, transform.position) < targetBuffer)
+            {
                 _curSpeed -= decelerarion * Time.deltaTime; // при приближении к цели снижаем скорость до 0
-                if (_curSpeed <= 0) {
+                if (_curSpeed <= 0)
+                {
                     _targetPos = Vector3.one;
                 }
             }
@@ -67,27 +76,35 @@ public class PointClickMovement : MonoBehaviour
 
         bool hitGround = false;
         RaycastHit hit;
-        if (_vertSpeed < 0 && Physics.Raycast(transform.position, Vector3.down, out hit)) { // проверяем, падает ли персонаж
+        if (_vertSpeed < 0 && Physics.Raycast(transform.position, Vector3.down, out hit))
+        { // проверяем, падает ли персонаж
             // высота контроллера персонажа + скругленные углы делится на половину высоты персонажа (луч идёт из центра)
             float check = (_charController.height + _charController.radius) / 1.9f; // расстояние, с которым производится сравнение (слегка выходит за нижнюю часть капсулы)
             hitGround = hit.distance <= check;
         }
 
-        if (hitGround) { // свойство isGrounded компонента CharacterController проверяет, соприкасается ли контроллер с поверхностью
+        if (hitGround)
+        { // свойство isGrounded компонента CharacterController проверяет, соприкасается ли контроллер с поверхностью
             _vertSpeed = minFall;
             _animator.SetBool("Jumping", false);
-        } else { // если персонаж не стоит на поверхности, применяем гравитацию, пока не будет достигнута предельная скорость
+        } else
+        { // если персонаж не стоит на поверхности, применяем гравитацию, пока не будет достигнута предельная скорость
             _vertSpeed += gravity * 5 * Time.deltaTime;
-            if (_vertSpeed < terminalVelocity) {
+            if (_vertSpeed < terminalVelocity)
+            {
                 _vertSpeed = terminalVelocity;
             }
-            if (_contact != null) {
+            if (_contact != null)
+            {
                 _animator.SetBool("Jumping", true);
             }
-            if (_charController.isGrounded) { // метод бросания лучей не обнаружил поверхность, но капсула с ней соприкасается
-                if (Vector3.Dot(movement, _contact.normal) < 0) { // реакция меняется в зависимости от того, смотрит ли персонаж в сторону точки контакта
+            if (_charController.isGrounded)
+            { // метод бросания лучей не обнаружил поверхность, но капсула с ней соприкасается
+                if (Vector3.Dot(movement, _contact.normal) < 0)
+                { // реакция меняется в зависимости от того, смотрит ли персонаж в сторону точки контакта
                     movement = _contact.normal * moveSpeed;
-                } else {
+                } else
+                {
                     movement += _contact.normal * moveSpeed;
                 }
             }
@@ -98,11 +115,13 @@ public class PointClickMovement : MonoBehaviour
         _charController.Move(movement);
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit) {
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
         _contact = hit;
 
         Rigidbody body = hit.collider.attachedRigidbody; // проверяем, есть ли у участвующего в столкновении объекта компонент Rigidbody
-        if (body != null && !body.isKinematic) {
+        if (body != null && !body.isKinematic)
+        {
             body.velocity = hit.moveDirection * pushForce; // назначаем физическому телу скорость
         }
     }

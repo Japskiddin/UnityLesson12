@@ -19,20 +19,25 @@ public class WanderingAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_alive) {
+        if (_alive)
+        {
             transform.Translate(0, 0, speed * Time.deltaTime); // непрерывно движемся вперёд в каждом кадре, несмотря на повороты
 
             Ray ray = new Ray(transform.position, transform.forward); // луч находится в том же положении и нацеливается в том же направлении, что и персонаж
             RaycastHit hit;
-            if (Physics.SphereCast(ray, 0.75f, out hit)) { // бросаем луч с описанной вокруг него окружностью
+            if (Physics.SphereCast(ray, 0.75f, out hit))
+            { // бросаем луч с описанной вокруг него окружностью
                 GameObject hitObject = hit.transform.gameObject;
-                if (hitObject.GetComponent<PlayerCharacter>()) { // проверяем, игрок ли спереди
-                    if (_fireball == null) { // создаём фаерболл там, где стоит враг
+                if (hitObject.GetComponent<PlayerCharacter>())
+                { // проверяем, игрок ли спереди
+                    if (_fireball == null)
+                    { // создаём фаерболл там, где стоит враг
                         _fireball = Instantiate(fireballPrefab) as GameObject;
                         _fireball.transform.position = transform.TransformPoint(Vector3.forward * 1.5f);
                         _fireball.transform.rotation = transform.rotation;
                     }
-                } else if (hit.distance < obstacleRange) {
+                } else if (hit.distance < obstacleRange)
+                {
                     float angle = Random.Range(-110, 110); // поворот с наполовину случайным выбором нового направления
                     transform.Rotate(0, angle, 0);
                 }
@@ -40,7 +45,8 @@ public class WanderingAI : MonoBehaviour
         }
     }
 
-    public void SetAlive(bool alive) {
+    public void SetAlive(bool alive)
+    {
         _alive = alive;
     }
 }
