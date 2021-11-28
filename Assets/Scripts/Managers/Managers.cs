@@ -6,8 +6,10 @@ using UnityEngine;
 [RequireComponent(typeof(InventoryManager))] // убеждаемся, что различные диспетчеры существуют
 [RequireComponent(typeof(MissionManager))]
 [RequireComponent(typeof(DataManager))]
+[RequireComponent(typeof(AudioManager))]
 public class Managers : MonoBehaviour
 {
+    public static AudioManager Audio { get; private set; }
     public static PlayerManager Player { get; private set; } // статичные свойства, которыми остальной код пользуется для доступа к диспетчерам
     public static InventoryManager Inventory { get; private set; }
     public static MissionManager Mission { get; private set; }
@@ -18,6 +20,7 @@ public class Managers : MonoBehaviour
         DontDestroyOnLoad(gameObject); // команда Unity для сохранения объекта между сценами
 
         Data = GetComponent<DataManager>();
+        Audio = GetComponent<AudioManager>();
         Player = GetComponent<PlayerManager>();
         Inventory = GetComponent<InventoryManager>();
         Mission = GetComponent<MissionManager>();
@@ -26,6 +29,7 @@ public class Managers : MonoBehaviour
         _startSequence.Add(Player);
         _startSequence.Add(Inventory);
         _startSequence.Add(Mission);
+        _startSequence.Add(Audio);
         _startSequence.Add(Data);
 
         StartCoroutine(StartupManagers()); // асинхронно загружаем стартовую последовательность

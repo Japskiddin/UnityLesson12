@@ -8,12 +8,14 @@ public class UIController : MonoBehaviour
     [SerializeField] private Text healthLabel; // ссылаемся на UI объект в сцене
     [SerializeField] private InventoryPopup popup;
     [SerializeField] private Text levelEnding;
+    [SerializeField] private SettingsPopup settingsPopup;
 
     private void Awake()
     { // задаем подписчика для события обновления здоровья
         Messenger.AddListener(GameEvent.HEALTH_UPDATED, OnHealthUpdated);
         Messenger.AddListener(GameEvent.LEVEL_COMPLETE, OnLevelComplete);
         Messenger.AddListener(GameEvent.LEVEL_FAILED, OnLevelFailed);
+        Messenger.AddListener(GameEvent.GAME_COMPLETE, OnGameComplete);
     }
 
     private void OnDestroy()
@@ -21,6 +23,7 @@ public class UIController : MonoBehaviour
         Messenger.RemoveListener(GameEvent.HEALTH_UPDATED, OnHealthUpdated);
         Messenger.RemoveListener(GameEvent.LEVEL_COMPLETE, OnLevelComplete);
         Messenger.RemoveListener(GameEvent.LEVEL_FAILED, OnLevelFailed);
+        Messenger.RemoveListener(GameEvent.GAME_COMPLETE, OnGameComplete);
     }
 
     // Start is called before the first frame update
@@ -29,6 +32,7 @@ public class UIController : MonoBehaviour
         OnHealthUpdated();
         levelEnding.gameObject.SetActive(false);
         popup.gameObject.SetActive(false); // инициализируем вслпывающее окно закрытым
+        settingsPopup.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -36,10 +40,23 @@ public class UIController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         { // отображаем вслывающее окно по клавише M
+            settingsPopup.gameObject.SetActive(false);
             bool isShowing = popup.gameObject.activeSelf;
             popup.gameObject.SetActive(!isShowing);
             popup.Refresh();
+        } else if (Input.GetKeyDown(KeyCode.N))
+        {
+            popup.gameObject.SetActive(false);
+            bool isShowing = settingsPopup.gameObject.activeSelf;
+            settingsPopup.gameObject.SetActive(!isShowing);
+            settingsPopup.Refresh();
         }
+    }
+
+    private void OnGameComplete()
+    {
+        levelEnding.gameObject.SetActive(true);
+        levelEnding.text = "You finished the Game!";
     }
 
     private void OnHealthUpdated()

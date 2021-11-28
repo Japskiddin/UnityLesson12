@@ -14,12 +14,12 @@ public class MissionManager : MonoBehaviour, IGameManager
     {
         Debug.Log("Mission manager starting...");
         _network = service;
-        UpdateData(0, 1);
+        UpdateData(0, 3);
 
         status = ManagerStatus.Started;
     }
 
-    public void UpdateData(int curLeve, int maxLevel)
+    public void UpdateData(int curLevel, int maxLevel)
     {
         this.curLevel = curLevel;
         this.maxLevel = maxLevel;
@@ -29,13 +29,21 @@ public class MissionManager : MonoBehaviour, IGameManager
     {
         if (curLevel < maxLevel)
         { // проверяем, достигнут ли последний уровень
+            if (curLevel % 2 == 0)
+            {
+                Managers.Audio.PlayIntroMusic();
+            } else
+            {
+                Managers.Audio.PlayLevelMusic();
+            }
             curLevel++;
             string name = "Level" + curLevel;
             Debug.Log("Loading " + name);
             SceneManager.LoadScene(name); // команда загрузки сцены
         } else
         {
-            Debug.Log("Max level");
+            Debug.Log("Last level");
+            Messenger.Broadcast(GameEvent.GAME_COMPLETE);
         }
     }
 
